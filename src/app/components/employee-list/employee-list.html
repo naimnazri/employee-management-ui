@@ -1,41 +1,74 @@
 <div class="container mt-4">
+  <h2 class="mb-4">Employee Management System</h2>
 
-    <h2 class="mb-4">Employees</h2>
+  @if (!showForm) {
+    <button class="btn btn-primary mb-3" (click)="showForm = true">Add Employee</button>
+  }
 
-    <button class="btn btn-primary mb-3">
-        Add Employee
-    </button>
+  @if (showForm) {
+    <div class="mb-4">
+      <app-employee-form
+        [employee]="selectedEmployee"
+        (saveEmployee)="saveEmployee($event)"
+        (cancelForm)="cancelForm()"
+      >
+      </app-employee-form>
+    </div>
+  }
 
-    <table class="table table-bordered table-striped">
+  <hr class="mb-3" />
 
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Position</th>
-            </tr>
-        </thead>
+  @if (successMessage) {
+    <div class="alert alert-success">
+      {{ successMessage }}
+    </div>
+  }
 
-        <tbody>
+  <div class="mb-3">
+    <input class="form-control" placeholder="Search employee..." [(ngModel)]="searchTerm" />
+  </div>
 
-            @for (employee of employees; track employee.employeeId) {
+  @if (filteredEmployees().length === 0) {
+    <div class="alert alert-warning">No employee found.</div>
+  }
 
-            <tr>
-                <td>{{employee.employeeId}}</td>
-                <td>{{employee.firstName}}</td>
-                <td>{{employee.lastName}}</td>
-                <td>{{employee.email}}</td>
-                <td>{{employee.department}}</td>
-                <td>{{employee.position}}</td>
-            </tr>
+  <hr class="mb-4" />
 
-            }
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>No.</th>
+        <th>Employee ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Position</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
 
-        </tbody>
+    <tbody>
+      @for (employee of filteredEmployees(); track employee.employeeId; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ employee.employeeId }}</td>
+          <td>{{ employee.firstName }}</td>
+          <td>{{ employee.lastName }}</td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.department }}</td>
+          <td>{{ employee.position }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-2" (click)="editEmployee(employee)">
+              Edit
+            </button>
 
-    </table>
-
+            <button class="btn btn-danger btn-sm" (click)="deleteEmployee(employee.employeeId)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>
